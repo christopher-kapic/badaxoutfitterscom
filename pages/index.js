@@ -48,7 +48,7 @@ export default function Home() {
         <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
         </main>
         <main>
-          This is a second main section.. Woah, I didn't know you could do that!
+          This is a second main section.. Woah, I didn&apos;t know you could do that!
         </main>
       </div>
       <style jsx>
