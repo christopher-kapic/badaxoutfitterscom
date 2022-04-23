@@ -1,5 +1,8 @@
 import Head from 'next/head'
 import { PurchaseVideo, PurchaseDialog } from '../components/PurchaseVideo'
+import { Directus } from '@directus/sdk';
+const directus = new Directus(process.env.DIRECTUS_URL);
+
 
 export default function Purchase() {
   return (

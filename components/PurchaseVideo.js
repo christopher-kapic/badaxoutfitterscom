@@ -52,13 +52,16 @@ const PurchaseBackNext = ({state, setState, noBack=false, noNext=false}) => {
   )
 }
 
-export const PurchaseDialog = ({maxPartySize=2}) => {
+export const PurchaseDialog = ({maxPartySize=3}) => {
+  const [availableHunts, setAvailableHunts] = useState([])
   const [step, setStep] = useState(0);
   const [partySize, setPartySize] = useState(1);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
   const emailRef = useRef();
   const phoneRef = useRef();
   const nameRef = useRef();
+  const [selectedHunt, setSelectedHunt] = useState()
   useEffect(() => {
     if (partySize <= 0) {
       setPartySize(1);
@@ -67,9 +70,20 @@ export const PurchaseDialog = ({maxPartySize=2}) => {
       setPartySize(maxPartySize);
     }
   }, [partySize])
+  useEffect(async () => {
+    fetch('/api/getAvailableHunts', {
+      method: "POST",
+      body: JSON.stringify({
+        partySize: partySize
+      })
+    }).then(res => res.json()).then(data => setAvailableHunts(data.data))
+  }, [step])
+  useEffect(() => {
+    console.log(availableHunts)
+  }, [availableHunts])
   return (
     <>
-      <div id="party-size">
+      <div id="party-size" className="cont">
         <span>How many people are in your party?</span>
         <div id="party-size-div">
           <button onClick={() => setPartySize(partySize - 1)} style={{opacity: `${(partySize === 1) ? 0 : 1}`}}>-</button>
@@ -78,28 +92,76 @@ export const PurchaseDialog = ({maxPartySize=2}) => {
           </span>
           <button onClick={() => setPartySize(partySize + 1)} style={{opacity: `${(partySize === maxPartySize) ? 0 : 1}`}}>+</button>
         </div>
-        <PurchaseBackNext state={step} setState={setStep} noBack={true}/>
+        <PurchaseBackNext state={step} setState={setStep} noBack={true} setAvailableHunts={setAvailableHunts}/>
       </div>
-      <div id="date">
+      <div id="date" className="cont">
         <span>Choose a hunt.</span>
-        <div>
-
-        </div>
+        {availableHunts.map((hunt) => {
+          console.log(hunt)
+          const start = new Date(hunt.starts)
+          const ends = new Date(hunt.ends)
+          return(
+            <div key={hunt.id} onClick={() => setSelectedHunt(hunt.id)}>
+              <div><span style={{padding: "0 4px 0 0"}}>Starts: {start.getMonth()}/{start.getDate()}/{start.getFullYear()}</span><span style={{padding: "0 0 0 4px"}}>Ends: {ends.getMonth()}/{ends.getDate()}/{ends.getFullYear()}</span></div>
+              <div>Downpayment: ${hunt.down_payment}</div>
+              <div>Cash on arrival: ${hunt.cash_on_arrival}</div>
+            </div>
+          )
+        })}
         <PurchaseBackNext state={step} setState={setStep}/>
       </div>
-      <div id="information">
+      <div id="information" className="cont">
         <span>Name</span>
         <input type="text" ref={nameRef} required placeholder="Required"></input>
         <span>Email</span>
         <input type="text" ref={emailRef} required placeholder="Required"></input>
         <span>Phone</span>
         <input type="text" ref={phoneRef} required placeholder="Required"></input>
-        <button onClick={() => {setPaymentLoading(true)}}>{paymentLoading ? "Loading..." : "Continue to Payment"}</button>
+        {(paymentError === "") ? <></> : <span style={{color: 'white'}}>{paymentError}</span>}
+        <button onClick={() => {
+          setPaymentLoading(true)
+          console.log(nameRef.current.value === "") 
+          if (nameRef.current.value === "") {
+            setPaymentError("Please enter your name.")
+            setPaymentLoading(false)
+            return;
+          } else if (phoneRef.current.value === "") {
+            setPaymentError("Please enter your phone number.")
+            setPaymentLoading(false)
+            return;
+          } else if (emailRef.current.value === "") {
+            setPaymentError("Please enter your email address.")
+            setPaymentLoading(false)
+            return;
+          } else if (!selectedHunt) {
+            setPaymentError("Please choose a hunt.")
+            setPaymentLoading(false)
+            return;
+          } else if (!partySize) {
+            setPaymentError("Invalid party size.")
+            setPaymentLoading(false)
+            return;
+          } else if (phoneRef.current.value.replace(/\D/g,'').length < 7) {
+            setPaymentError("Invalid phone number.")
+            setPaymentLoading(false)
+          }
+
+          fetch('/api/getStripeCheckout', {
+            method: "POST",
+            body: JSON.stringify({
+              name: nameRef.current.value,
+              email: emailRef.current.value,
+              phone: phoneRef.current.value,
+              huntId: selectedHunt,
+              partySize: partySize
+            })
+          }).then(res => res.json()).then(json => console.log(json))
+        }}>{paymentLoading ? "Loading..." : "Continue to Payment"}</button>
         <PurchaseBackNext state={step} setState={setStep} noNext={true}/>
       </div>
       <style jsx>
         {`
-          div {
+          .cont {
             width: auto;
             height: auto;
             transition: 0.2s;
