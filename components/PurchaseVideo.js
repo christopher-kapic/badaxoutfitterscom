@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from 'next/router'
 const ArrowDownCircleLogo = <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm0 18c4.42 0 8-3.58 8-8s-3.58-8-8-8-8 3.58-8 8 3.58 8 8 8zm1-8h3l-4 4-4-4h3V8h2v4z"/></svg>
 
 const PurchaseBackNext = ({state, setState, noBack=false, noNext=false}) => {
@@ -54,6 +55,7 @@ const PurchaseBackNext = ({state, setState, noBack=false, noNext=false}) => {
 
 export const PurchaseDialog = ({maxPartySize=3}) => {
   const [availableHunts, setAvailableHunts] = useState([])
+  const router = useRouter()
   const [step, setStep] = useState(0);
   const [partySize, setPartySize] = useState(1);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -101,7 +103,16 @@ export const PurchaseDialog = ({maxPartySize=3}) => {
           const start = new Date(hunt.starts)
           const ends = new Date(hunt.ends)
           return(
-            <div key={hunt.id} onClick={() => setSelectedHunt(hunt.id)}>
+            <div style={{
+              borderColor: `${(selectedHunt === hunt.id) ? '#4fa476' : 'white'}`,
+              borderWidth: 3,
+              borderStyle: 'solid',
+              borderRadius: 4,
+              padding: 6,
+              backgroundColor: `${(selectedHunt === hunt.id) ? '#3f9466' : '#222222'}`,
+              cursor: 'pointer',
+              margin: '3px 0px'
+            }} key={hunt.id} onClick={() => setSelectedHunt(hunt.id)}>
               <div><span style={{padding: "0 4px 0 0"}}>Starts: {start.getMonth()}/{start.getDate()}/{start.getFullYear()}</span><span style={{padding: "0 0 0 4px"}}>Ends: {ends.getMonth()}/{ends.getDate()}/{ends.getFullYear()}</span></div>
               <div>Downpayment: ${hunt.down_payment}</div>
               <div>Cash on arrival: ${hunt.cash_on_arrival}</div>
@@ -155,7 +166,10 @@ export const PurchaseDialog = ({maxPartySize=3}) => {
               huntId: selectedHunt,
               partySize: partySize
             })
-          }).then(res => res.json()).then(json => console.log(json))
+          }).then(res => res.json()).then(json => {
+            window.open(json.url)
+            router.push('/')
+          })
         }}>{paymentLoading ? "Loading..." : "Continue to Payment"}</button>
         <PurchaseBackNext state={step} setState={setStep} noNext={true}/>
       </div>

@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { BackgroundVideo } from '../components/BackgroundVideo'
-import styles from '../styles/Home.module.css'
+import { Directus } from '@directus/sdk';
 
-export default function Home() {
+export default function Home({data}) {
+  const {title, description, video, content} = data
   return (
     <>
       <Head>
@@ -13,41 +13,14 @@ export default function Home() {
       </Head>
 
       {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/ro-home34.mp4" lml="#about"> */}
-      <BackgroundVideo title="Ross Outfitters" video="/videos/clip7.mov" lml="#about">
+      <BackgroundVideo title="Ross Outfitters" video={video} lml="#about">
       {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/clip3.mov" lml="#about"> */}
-        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>Test</p>
-        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>This content will be filled by Jake Ross. It can be as long or as short as he would like it to be, but too much is not a good idea.</p>
+        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{title}</p>
+        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{description}</p>
       </BackgroundVideo>
 
       <div>
-        <main>
-          <h1>Ross Outfitters</h1>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        <p>This is Christopher typing a lot of text. How far will it go? That is a good question to ask.</p>
-        </main>
-        <main>
-          This is a second main section.. Woah, I didn&apos;t know you could do that!
-        </main>
+        <main dangerouslySetInnerHTML={{ __html: content }}/>
       </div>
       <style jsx>
         {`
@@ -83,4 +56,19 @@ export default function Home() {
       </style>
     </>
   )
+}
+
+export async function getStaticProps(context) {
+  const directus = new Directus(`https://${process.env.DIRECTUS_URL}`, {
+    auth: {
+      staticToken: process.env.DIRECTUS_READ_API_KEY, // If you want to use a static token, otherwise check below how you can use email and password.
+    },
+  });
+  const home = await directus.items('trail_cameras').readByQuery({meta: 'total_count'})
+  const { data } = home;
+  return {
+    props: {
+      data
+    }
+  }
 }

@@ -1,9 +1,9 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { BackgroundVideo } from '../components/BackgroundVideo'
-import { Directus } from '@directus/sdk';
+import styles from '../styles/Home.module.css'
 
-export default function Home({data}) {
-  const {title, description, content} = data;
+export default function Home() {
   return (
     <>
       <Head>
@@ -13,16 +13,13 @@ export default function Home({data}) {
       </Head>
 
       {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/ro-home34.mp4" lml="#about"> */}
-      <BackgroundVideo title="Ross Outfitters" video="" lml="#about">
-        {/* clips: , clip9,  */}
-      {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/clip3.mov" lml="#about"> */}
-        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{title}</p>
-        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{description}</p>
+      {/* <BackgroundVideo title="Ross Outfitters" video="/videos/clip1.mov" lml="#about"> */}
+      <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/clip6.mov" lml="#about">
+        {/* clip1, clip6 */}
+        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>Success</p>
+        <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>Your payment was successful! You should receive an email shortly.</p>
       </BackgroundVideo>
 
-      <div>
-        <main dangerouslySetInnerHTML={{ __html: content }}/>
-      </div>
       <style jsx>
         {`
           div {
@@ -57,19 +54,4 @@ export default function Home({data}) {
       </style>
     </>
   )
-}
-
-export async function getStaticProps(context) {
-  const directus = new Directus(`https://${process.env.DIRECTUS_URL}`, {
-    auth: {
-      staticToken: process.env.DIRECTUS_READ_API_KEY, // If you want to use a static token, otherwise check below how you can use email and password.
-    },
-  });
-  const home = await directus.items('bad_ax_workshop').readByQuery({meta: 'total_count'})
-  const { data } = home;
-  return {
-    props: {
-      data
-    }
-  }
 }
