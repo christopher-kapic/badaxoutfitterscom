@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { BackgroundVideo } from '../components/BackgroundVideo'
 import { Directus } from '@directus/sdk';
+import styles from '../styles/Home.module.css'
 
 
 export default function Home({data}) {
@@ -21,7 +22,7 @@ export default function Home({data}) {
         <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{description}</p>
       </BackgroundVideo>
 
-      <div>
+      <div className={styles.div}>
         {/* <img src="/icostarter.png" alt="Italian Trulli" width="300"></img> */}
         <main dangerouslySetInnerHTML={{ __html: content }}/>
         {/* <main>
@@ -52,6 +53,8 @@ export default function Home({data}) {
             -webkit-backdrop-filter: blur( 6px );
             border-radius: 10px;
             border: 1px solid rgba( 255, 255, 255, 0.18 );
+            display: inline-block;
+            overflow: hidden;
           }
           @media (min-width: 769px) {
             div main {

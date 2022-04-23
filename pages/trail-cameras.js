@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { BackgroundVideo } from '../components/BackgroundVideo'
 import { Directus } from '@directus/sdk';
+import styles from '../styles/Home.module.css'
 
 export default function Home({data}) {
   const {title, description, video, content} = data
@@ -19,7 +20,7 @@ export default function Home({data}) {
         <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{description}</p>
       </BackgroundVideo>
 
-      <div>
+      <div className={styles.div}>
         <main dangerouslySetInnerHTML={{ __html: content }}/>
       </div>
       <style jsx>

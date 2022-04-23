@@ -1,9 +1,11 @@
 import Head from 'next/head'
 import { BackgroundVideo } from '../components/BackgroundVideo'
 import { Directus } from '@directus/sdk';
+import styles from '../styles/Home.module.css'
 
 export default function Home({data}) {
   const {title, description, content, video} = data;
+  console.log(video)
   return (
     <>
       <Head>
@@ -20,7 +22,7 @@ export default function Home({data}) {
         <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{description}</p>
       </BackgroundVideo>
 
-      <div>
+      <div className={styles.div}>
         <main dangerouslySetInnerHTML={{ __html: content }}/>
       </div>
       <style jsx>
@@ -47,6 +49,9 @@ export default function Home({data}) {
             -webkit-backdrop-filter: blur( 6px );
             border-radius: 10px;
             border: 1px solid rgba( 255, 255, 255, 0.18 );
+          }
+          div main p img {
+            width: 100%;
           }
           @media (min-width: 769px) {
             div main {
