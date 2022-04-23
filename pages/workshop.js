@@ -3,7 +3,7 @@ import { BackgroundVideo } from '../components/BackgroundVideo'
 import { Directus } from '@directus/sdk';
 
 export default function Home({data}) {
-  const {title, description, content} = data;
+  const {title, description, content, video} = data;
   return (
     <>
       <Head>
@@ -13,7 +13,7 @@ export default function Home({data}) {
       </Head>
 
       {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/ro-home34.mp4" lml="#about"> */}
-      <BackgroundVideo title="Ross Outfitters" video="" lml="#about">
+      <BackgroundVideo title="Ross Outfitters" video={video} lml="#about">
         {/* clips: , clip9,  */}
       {/* <BackgroundVideo title="Ross Outfitters" video="https://rossoutfitters.b-cdn.net/clip3.mov" lml="#about"> */}
         <p style={{color: "white", textShadow: "2px 2px 6px #000000"}}>{title}</p>

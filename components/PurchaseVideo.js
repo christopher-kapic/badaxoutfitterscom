@@ -53,7 +53,7 @@ const PurchaseBackNext = ({state, setState, noBack=false, noNext=false}) => {
   )
 }
 
-export const PurchaseDialog = ({maxPartySize=3}) => {
+export const PurchaseDialog = ({maxPartySize=5}) => {
   const [availableHunts, setAvailableHunts] = useState([])
   const router = useRouter()
   const [step, setStep] = useState(0);

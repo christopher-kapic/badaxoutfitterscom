@@ -5,7 +5,6 @@ import { Directus } from '@directus/sdk';
 
 export default function Home({data}) {
   const {title, description, video, content} = data;
-  console.log(title)
   return (
     <>
       <Head>
